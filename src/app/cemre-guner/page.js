@@ -20,6 +20,7 @@ export default function CemreGuner() {
             src="/education.jpg"
             alt="Cemre Güner"
             fill
+            sizes="128px"
             className="object-cover rounded-full"
           />
         </div>

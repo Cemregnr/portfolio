@@ -12,6 +12,7 @@ export const Card = () => {
           alt="Example"
           width={1200}
           height={900}
+          sizes="320px"
           className="card-image"
         />
       </div>
