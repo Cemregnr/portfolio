@@ -1,8 +1,9 @@
 import { supabase } from '@/lib/supabaseClient';
 import { notFound } from 'next/navigation';
+import { use } from 'react';
 
 export default async function ArticlePage({ params }) {
-  const { slug } = params;
+  const { slug } = use(params);
   const { data: article, error } = await supabase
     .from('articles')
     .select('*')
