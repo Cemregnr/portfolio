@@ -17,7 +17,7 @@ export default function Register() {
 
     const router = useRouter();
 
-    // Cooldown timer
+    
     useEffect(() => {
         if (cooldown > 0) {
             const timer = setTimeout(() => setCooldown(cooldown - 1), 1000);
@@ -27,12 +27,12 @@ export default function Register() {
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        console.log('Registration form submitted'); // Debug log
-        console.log('Form data:', { fullName, email, password, confirmPassword }); // Debug log
+        console.log('Registration form submitted');
+        console.log('Form data:', { fullName, email, password, confirmPassword });
         
-        // Rate limiting check
+       
         const now = Date.now();
-        if (now - lastAttempt < 10000) { // 10 second cooldown
+        if (now - lastAttempt < 10000) {
             const remainingTime = Math.ceil((10000 - (now - lastAttempt)) / 1000);
             toast.error(`Please wait ${remainingTime} seconds before trying again`);
             return;
@@ -68,7 +68,7 @@ export default function Register() {
             return;
         }
 
-        // Enhanced password validation
+        
         if (password.length < 8) {
             toast.error("Password must be at least 8 characters long");
             return;
@@ -87,7 +87,7 @@ export default function Register() {
 
         setLoading(true);
 
-        // Normalize email and data
+        
         const normalizedEmail = email.toLowerCase().trim();
         const trimmedFullName = fullName.trim();
 
@@ -106,9 +106,9 @@ export default function Register() {
             
             if (error.message.includes('rate limit') || error.message.includes('Too Many Requests') || error.status === 429) {
                 toast.error("Too many attempts. Please wait 5 minutes before trying again.");
-                setCooldown(300); // 5 minute cooldown
+                setCooldown(300); 
             } else if (error.status === 422 || error.message.includes('invalid')) {
-                // More specific validation error handling
+                
                 if (error.message.includes('email')) {
                     toast.error("Invalid email format. Please check your email address.");
                 } else if (error.message.includes('password')) {
@@ -125,12 +125,12 @@ export default function Register() {
 
         const userId = data?.user?.id;
         if (userId) {
-            // Skip profile creation for now - will be handled by trigger
+            
             console.log('User created successfully with ID:', userId);
             console.log('Profile will be created automatically by database trigger');
         }
 
-        // Success message - check if email confirmation is needed
+        
         if (data?.user && !data.user.email_confirmed_at) {
             toast.success("Registration successful! Please check your email to confirm your account before logging in.");
         } else {
@@ -139,7 +139,7 @@ export default function Register() {
         
         setLoading(false);
         
-        // Redirect to login page after successful registration
+       
         setTimeout(() => {
             router.push('/auth/login');
         }, 2000);

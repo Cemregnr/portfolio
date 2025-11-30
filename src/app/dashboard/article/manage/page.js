@@ -21,7 +21,7 @@ export default function page() {
     const [categories, setCategories] = useState([]);
 
     const fetchCategories = async () => {
-        // Use same categories as /categories page for consistency
+        
         const staticCategories = [
             { id: 1, title: "Teaching Methods", slug: "teaching-methods" },
             { id: 2, title: "Language Skills", slug: "language-skills" },
@@ -35,7 +35,7 @@ export default function page() {
         
         setCategories(staticCategories);
         
-        // Also try to fetch from database if available
+        
         const { data, error } = await supabase.from("categories").select("*");
         
         if (!error && data && data.length > 0) {
@@ -111,9 +111,9 @@ export default function page() {
         const slug = title
             ?.toLowerCase()
             ?.trim()
-            ?.replace(/[^\w\s-]/g, "") // Remove special characters
-            .replace(/\s+/g, "-") // Replace spaces with dashes
-            .replace(/-+/g, "-"); // Clean up multiple dashes
+            ?.replace(/[^\w\s-]/g, "") 
+            .replace(/\s+/g, "-") 
+            .replace(/-+/g, "-"); 
 
         
         if (articleId) {
@@ -160,7 +160,7 @@ export default function page() {
             }
 
             toast.success("Article created successfully");
-            // Redirect to dashboard after successful creation
+            
             setTimeout(() => {
                 router.push('/dashboard');
             }, 1500);
@@ -180,7 +180,7 @@ export default function page() {
                         </h1>
                     </div>
                     <form onSubmit={handleSubmit} className="space-y-10 relative">
-                        {/* Thumbnail  */}
+                    
                         <div className="flex lg:flex-row flex-col gap-7 items-center">
                             <Image 
                                 width={500} 

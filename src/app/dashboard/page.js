@@ -18,7 +18,7 @@ export default function page() {
     const [notifications, setNotifications] = useState([]);
     const [loadingDashboardStats, setLoadingDashboardStats] = useState(false);
 
-    // Redirect to login if not authenticated
+    
     useEffect(() => {
         if (!loading && !user) {
             router.push('/auth/login');
@@ -50,7 +50,7 @@ export default function page() {
             return;
         }
 
-        // Get total counts for stats
+        
         const { data: totalCommentsData } = await supabase
             .from("comments")
             .select("id", { count: "exact" });
@@ -59,10 +59,10 @@ export default function page() {
             .from("likes")
             .select("id", { count: "exact" });
 
-        // Calculate total views from articles
+       
         const totalViews = articles?.reduce((sum, article) => sum + (article.views || 0), 0) || 0;
 
-        // Dashboard stats array with 5 elements
+       
         const statsArray = [
             { title: "Views", value: totalViews, icon: "👁", bg: "bg-white/20", text: "text-black" },
             { title: "Posts", value: articles?.length || 0, icon: "📄", bg: "bg-white/20", text: "text-black" },
@@ -71,7 +71,7 @@ export default function page() {
             { title: "Notifications", value: notifications?.length || 0, icon: "🔔", bg: "bg-white/20", text: "text-black" },
         ];
 
-        // Fetch comments and notifications
+        
         const { data: commentsData } = await supabase
             .from("comments")
             .select(`
@@ -113,9 +113,9 @@ export default function page() {
         if (user?.id) {
             fetchDashboardData();
         }
-    }, [user?.id]); // Only depend on user.id, not entire user object
+    }, [user?.id]); 
 
-    // Don't render if user is not loaded yet
+    
     if (!user && loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">

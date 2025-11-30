@@ -57,9 +57,9 @@ export default function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        // Rate limiting check
+        
         const now = Date.now();
-        if (now - lastAttempt < 5000) { // 5 second cooldown
+        if (now - lastAttempt < 5000) { 
             const remainingTime = Math.ceil((5000 - (now - lastAttempt)) / 1000);
             toast.error(`Please wait ${remainingTime} seconds before trying again`);
             return;
@@ -75,7 +75,7 @@ export default function Login() {
             return;
         }
 
-        // Enhanced email validation
+        
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
             toast.error("Please enter a valid email address");
@@ -84,7 +84,7 @@ export default function Login() {
 
         setLoading(true);
 
-        // Normalize email
+        
         const normalizedEmail = email.toLowerCase().trim();
 
         const { data, error } = await supabase.auth.signInWithPassword({
@@ -99,9 +99,9 @@ export default function Login() {
             
             if (error.message.includes('rate limit') || error.message.includes('Too Many Requests') || error.status === 429) {
                 toast.error("Too many login attempts. Please wait 2 minutes.");
-                setCooldown(120); // 2 minute cooldown
+                setCooldown(120); 
             } else if (error.status === 400) {
-                // Handle specific 400 errors
+               
                 if (error.message.includes('Invalid login credentials') || error.message.includes('invalid')) {
                     toast.error("Invalid credentials. Please check your email for confirmation link or resend it.", {
                         duration: 6000,
@@ -125,7 +125,7 @@ export default function Login() {
 
         toast.success("Login successful! Redirecting...");
         setLoading(false);
-        router.push("/"); // Redirect to homepage instead of dashboard
+        router.push("/"); 
     };
     return (
         <div>

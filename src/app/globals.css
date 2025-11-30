@@ -119,7 +119,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #f8f9fa; /* Light gray background */
+    background-color: #f8f9fa; 
   }
 }
 

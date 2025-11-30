@@ -1,4 +1,4 @@
-// components/Card.tsx
+
 "use client";
 import Image from "next/image";
 

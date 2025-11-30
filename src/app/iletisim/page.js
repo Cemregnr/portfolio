@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 
 function ArticlePage() {
   const { slug } = useParams();
-  // ...fetch and render article by slug...
+  
   return <div>Article: {slug}</div>;
 }
 
@@ -31,7 +31,7 @@ const ContactPage = () => {
       return;
     }
 
-    // Check for actual EmailJS configuration
+  
     const serviceId = process.env.NEXT_PUBLIC_SERVICE_ID;
     const templateId = process.env.NEXT_PUBLIC_TEMPLATE_ID;
     const publicKey = process.env.NEXT_PUBLIC_PUBLIC_KEY;

@@ -93,7 +93,6 @@ const posts = [
   },
 ];
 
-// Tek bir blog kartı bileşeni
 function BlogCard({ post }) {
   const category = categoryStyles[post.category];
 
@@ -178,7 +177,7 @@ export default function Blog() {
         </div>
       </div>
 
-      {/* Alt Kısım - Grid */}
+      {/* Alt Kısım  */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {posts.slice(3).map((post) => (
           <BlogCard key={post.id} post={post} />

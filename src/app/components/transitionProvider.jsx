@@ -9,9 +9,8 @@ import { Footer } from "./footer";
 const TransitionProvider = ({ children }) => {
   const pathName = usePathname();
 
-  // en/cemre-guner
 
-  let paths = pathName.split("/"); // en, cemre-guner
+  let paths = pathName.split("/"); 
 
   let myPathName = "";
 

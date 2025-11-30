@@ -16,7 +16,7 @@ export default function ConfirmEmail() {
     useEffect(() => {
         const handleEmailConfirmation = async () => {
             try {
-                // Get the token from URL parameters
+                
                 const token_hash = searchParams.get('token_hash');
                 const type = searchParams.get('type');
 
@@ -39,7 +39,7 @@ export default function ConfirmEmail() {
                         setConfirmed(true);
                         toast.success("Email confirmed successfully! You can now login.");
                         
-                        // Redirect to login after 3 seconds
+                        
                         setTimeout(() => {
                             router.push('/auth/login');
                         }, 3000);

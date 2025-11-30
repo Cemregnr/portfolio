@@ -30,13 +30,13 @@ export default function page() {
         const file = e.target.files[0];
         if (!file) return;
 
-        // File validation
+        
         if (!file.type.startsWith('image/')) {
             toast.error("Please select a valid image file");
             return;
         }
 
-        // File size check (max 5MB)
+        
         if (file.size > 5 * 1024 * 1024) {
             toast.error("Image size must be less than 5MB");
             return;
@@ -49,7 +49,7 @@ export default function page() {
             const fileName = `${user.id}_${Date.now()}.${fileExt}`;
             const filePath = `avatars/${fileName}`;
             
-            // Upload to storage
+           
             const { error: uploadError } = await supabase.storage
                 .from("blog-bucket")
                 .upload(filePath, file, { upsert: true });
@@ -58,7 +58,7 @@ export default function page() {
                 throw uploadError;
             }
 
-            // Get public URL
+          
             const { data } = supabase.storage
                 .from("blog-bucket")
                 .getPublicUrl(filePath);
@@ -67,7 +67,7 @@ export default function page() {
                 throw new Error("Failed to get public URL");
             }
 
-            // Update profile image in database separately
+            
             const { error: updateError } = await supabase
                 .from("user_profiles")
                 .update({ image: data.publicUrl })
@@ -75,13 +75,13 @@ export default function page() {
 
             if (updateError) {
                 console.error("Database update error:", updateError);
-                // Still show success for upload, but warn about database
+                
                 toast.success("Image uploaded, but profile update failed. Please refresh the page.");
             } else {
                 toast.success("Avatar updated successfully!");
             }
 
-            // Update local state regardless of database update
+           
             setProfile((prev) => ({ ...prev, image: data.publicUrl }));
             
         } catch (error) {
@@ -100,7 +100,7 @@ export default function page() {
         }
         setLoading(true);
 
-        // Only update fields that definitely exist in the table
+       
         const updateData = {
             full_name: profile.full_name || ''
         };
@@ -122,7 +122,7 @@ export default function page() {
         }
     }, [user?.id]);
 
-    // Don't render if user is not loaded yet
+    
     if (!user) {
         return (
             <div className="flex justify-center items-center min-h-screen">

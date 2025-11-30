@@ -122,7 +122,7 @@ const Navbar = () => {
             <h1 className="text-xs sm:text-sm font-semibold border-b-2 border-transparent hover:border-primary transition-colors duration-200 whitespace-nowrap">Cemre Güner</h1>
           </Link>
           
-          {/* BOOKMARKED SECTION */}
+          {/* BOOKMARKED  */}
           <Dialog>
             <DialogTrigger asChild>
               <button className="flex items-center justify-center p-1 sm:p-2 hover:bg-gray-100 rounded-md transition-colors border border-gray-300">
@@ -203,7 +203,7 @@ const Navbar = () => {
           </Dialog>
 
 
-{/* Conditional Auth Button */}
+
 {user ? (
   <div className="hidden lg:flex items-center gap-3">
     <span className="text-xs sm:text-sm font-semibold text-black">
