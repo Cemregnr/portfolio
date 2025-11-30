@@ -31,7 +31,12 @@ const Navbar = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
+    try {
+      await signOut();
+      window.location.href = "/auth/login";
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
   };
 
 
@@ -216,7 +221,7 @@ const Navbar = () => {
       className="flex items-center justify-center p-2 bg-primary/20 hover:bg-primary/30 rounded-md transition-colors border border-primary/40"
       title="Logout"
     >
-      <LogOut size={18} className="text-black" />
+      <LogOut size={18} className="text-black cursor-pointer" />
     </button>
   </div>
 ) : (

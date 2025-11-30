@@ -14,8 +14,11 @@ export default function page() {
     const { loading, profile, user } = useAuth();
     const [stats, setStats] = useState([]);
     const [articles, setArticles] = useState([]);
+    const [comments, setComments] = useState([]);
+    const [notifications, setNotifications] = useState([]);
     const [loadingDashboardStats, setLoadingDashboardStats] = useState(false);
-    
+
+    // Redirect to login if not authenticated
     useEffect(() => {
         if (!loading && !user) {
             router.push('/auth/login');
@@ -47,14 +50,48 @@ export default function page() {
             return;
         }
 
+        // Get total counts for stats
+        const { data: totalCommentsData } = await supabase
+            .from("comments")
+            .select("id", { count: "exact" });
+
+        const { data: totalLikesData } = await supabase
+            .from("likes")
+            .select("id", { count: "exact" });
+
+        // Calculate total views from articles
         const totalViews = articles?.reduce((sum, article) => sum + (article.views || 0), 0) || 0;
 
+        // Dashboard stats array with 5 elements
         const statsArray = [
             { title: "Views", value: totalViews, icon: "👁", bg: "bg-white/20", text: "text-black" },
-            { title: "Posts", value: articles?.length || 0, icon: "📄", bg: "bg-white/20", text: "text-black" }
+            { title: "Posts", value: articles?.length || 0, icon: "📄", bg: "bg-white/20", text: "text-black" },
+            { title: "Likes", value: totalLikesData?.length || 0, icon: "♡", bg: "bg-white/20", text: "text-black" },
+            { title: "Comments", value: totalCommentsData?.length || 0, icon: "💬", bg: "bg-white/20", text: "text-black" },
+            { title: "Notifications", value: notifications?.length || 0, icon: "🔔", bg: "bg-white/20", text: "text-black" },
         ];
 
+        // Fetch comments and notifications
+        const { data: commentsData } = await supabase
+            .from("comments")
+            .select(`
+                id, comment, date_created,
+                user_profiles:profile_id(full_name, image),
+                articles:article_id(title, slug)
+            `)
+            .order("date_created", { ascending: false })
+            .limit(10);
+
+        const { data: notificationsData } = await supabase
+            .from("notifications")
+            .select("*")
+            .eq("user_id", user.id)
+            .order("created_at", { ascending: false })
+            .limit(10);
+
         setArticles(articles || []);
+        setComments(commentsData || []);
+        setNotifications(notificationsData || []);
         setStats(statsArray);
         setLoadingDashboardStats(false);
     };
@@ -105,7 +142,7 @@ export default function page() {
     return (
         <div>
             <section className="lg:px-33 px-5 my-20 space-y-10 z-10">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 lg:grid-cols-5 gap-4">
                     {stats?.length > 0 ? stats?.map((stat, index) => (
                         <div key={index} className="p-5 rounded-lg flex items-center gap-4 bg-linear-to-b from-primary/10 to-primary/60 border border-primary/30">
                             <div className={`text-3xl p-3 rounded-lg ${stat?.bg} ${stat?.text} flex items-center justify-center w-12 h-12`}>
@@ -117,13 +154,13 @@ export default function page() {
                             </div>
                         </div>
                     )) : (
-                        <div className="col-span-2 text-center text-gray-600 py-4">
+                        <div className="col-span-5 text-center text-gray-600 py-4">
                             Loading statistics...
                         </div>
                     )}
                 </div>
 
-                <div className="grid grid-cols-1 gap-4 items-stretch">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 items-stretch">
                     <div className="p-5 rounded-lg bg-linear-to-b from-primary/10 to-primary/60 border border-primary/30 space-y-8 h-full flex flex-col" onClick={fetchDashboardData}>
                         <div className="space-y-1">
                             <h2 className="text-3xl font-bold text-black">Posts</h2>
@@ -151,6 +188,14 @@ export default function page() {
                                                     <span className="w-3 h-3 flex items-center justify-center text-black">👁</span>
                                                     {article?.views || 0}
                                                 </span>
+                                                <span className="flex items-center gap-1">
+                                                    <span className="w-3 h-3 flex items-center justify-center text-black">♡</span>
+                                                    {article?.likes || 0}
+                                                </span>
+                                                <span className="flex items-center gap-1">
+                                                    <span className="w-3 h-3 flex items-center justify-center text-black">💬</span>
+                                                    {article?.comments || 0}
+                                                </span>
                                             </div>
                                             <div className="flex gap-2 mt-2">
                                                 <Link href={`/${article?.slug}`} className="h-8 w-8 flex items-center justify-center bg-green-700 rounded-md text-white text-xs hover:bg-green-600">
@@ -173,8 +218,68 @@ export default function page() {
                             )}
                         </div>
                     </div>
+                    <div className="p-5 rounded-lg bg-linear-to-b from-primary/10 to-primary/60 border border-primary/30 space-y-8 h-full flex flex-col">
+                        <div className="space-y-1">
+                            <h2 className="text-3xl font-bold text-black">Comments</h2>
+                            <p className="text-sm text-gray-800">Recent Comments</p>
+                        </div>
+                        <div className="overflow-y-auto flex-1 max-h-80">
+                            {comments?.length > 0 ? comments?.map((comment, index) => (
+                                <div key={comment.id || index} className="flex gap-3 items-start border-b border-primary/20 py-4 last:border-b-0">
+                                    <Image 
+                                        width={40} 
+                                        height={40} 
+                                        src={comment?.user_profiles?.image || "/avatar.jpg"} 
+                                        className="w-10 h-10 object-cover rounded-full shrink-0"
+                                        alt={comment?.user_profiles?.full_name || "User"} 
+                                    />
+                                    <div className="space-y-1 flex-1">
+                                        <p className="text-sm text-black font-medium">{comment?.user_profiles?.full_name}</p>
+                                        <p className="text-xs text-gray-700 line-clamp-2">{comment?.comment}</p>
+                                        <p className="text-xs text-gray-600">
+                                            On: <span className="font-medium">{comment?.articles?.title}</span>
+                                        </p>
+                                        <p className="text-xs text-gray-500">{formatDate(comment?.date_created)}</p>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className="text-center text-gray-600 py-8">
+                                    <p>No comments found</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div className="p-5 rounded-lg bg-linear-to-b from-primary/10 to-primary/60 border border-primary/30 space-y-8 h-full flex flex-col">
+                        <div className="space-y-1">
+                            <h2 className="text-3xl font-bold text-black">Notifications</h2>
+                            <p className="text-sm text-gray-800">Unread Notifications</p>
+                        </div>
+                        <div className="overflow-y-auto flex-1 max-h-80">
+                            {notifications?.length > 0 ? notifications?.map((notification, index) => (
+                                <div key={notification.id || index} className="flex items-start gap-4 border-b border-primary/20 py-4 last:border-b-0">
+                                    <div className={`text-2xl p-2 rounded-lg bg-white/20 text-black flex items-center justify-center w-10 h-10 shrink-0`}>
+                                        {notification?.type === "comment" ? "💬" : notification?.type === "like" ? "♡" : "🔔"}
+                                    </div>
+                                    <div className="space-y-1 flex-1">
+                                        <h3 className="text-sm font-bold text-black capitalize">
+                                            {notification?.type || "Notification"}
+                                        </h3>
+                                        <p className="text-xs text-gray-700 line-clamp-2">
+                                            {notification?.message || `${notification?.user_name || "Someone"} ${notification?.type === "comment" ? "commented on" : "liked"} your post`}
+                                        </p>
+                                        <p className="text-xs text-gray-500">{formatDate(notification?.created_at)}</p>
+                                    </div>
+                                </div>
+                            )) : (
+                                <div className="text-center text-gray-600 py-8">
+                                    <p>No notifications found</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                 </div>
             </section>
+           
         </div>
     );
 }
