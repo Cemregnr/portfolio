@@ -127,6 +127,17 @@ export default function Login() {
         setLoading(false);
         router.push("/"); // Redirect to homepage instead of dashboard
     };
+    // Logout handler
+    const handleLogout = async () => {
+        const { error } = await supabase.auth.signOut();
+        if (error) {
+            toast.error("Logout failed");
+        } else {
+            toast.success("Logged out successfully");
+            router.push("/");
+        }
+    };
+
     return (
         <div>
             <section className="lg:px-33 px-5 lg:my-20 my-10 flex justify-center items-center">
@@ -154,7 +165,7 @@ export default function Login() {
                             )}
                         </button>
                     </form>
-                    
+                    <button onClick={handleLogout} className="mt-4 w-full bg-linear-to-b from-primary/10 to-primary/60 text-black p-2 rounded-lg font-bold">Logout</button>
                     <p className="font-light text-xs text-center mt-10 text-gray-300">
                         Don't have an account yet?
                         <Link className="border-b border-dashed border-gray-300" href="/auth/register">
